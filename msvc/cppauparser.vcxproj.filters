@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\src\grammar.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\utility.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\lexer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\parser.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\strs.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tree.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{839e50ea-2091-4ec0-ad75-be66628d8ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{daab012d-65f1-4af5-b34e-0d15a6f9184a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\cppauparser\lexer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cppauparser\parser.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cppauparser\strs.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cppauparser\tree.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cppauparser\utility.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cppauparser\all.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cppauparser\grammar.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cppauparser\base.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,4 +1,4 @@
-// Copyright [year] <Copyright Owner>
+// Copyright 2012 Esun Kim
 
 #include "utility.h"
 #include "parser.h"
@@ -8,7 +8,7 @@ namespace cppauparser {
 template<typename T>
 ParseToTreeResult DoParseToTree(const Grammar& grammar, Parser& parser) {
   ParseToTreeResult ret;
-  
+
   T builder;
   if (parser.ParseAll(builder) == cppauparser::ParseResultType::kAccept) {
     ret.result = builder.result;

@@ -1,4 +1,4 @@
-// Copyright [year] <Copyright Owner>
+// Copyright 2012 Esun Kim
 
 #include "tree.h"
 #include <vector>
@@ -115,7 +115,7 @@ void TreeBuilder::operator()(ParseResultType::T ret,
     parser.GetTop().data = node;
   } else if (ret == ParseResultType::kReduce) {
     const ParseReduction& reduction = parser.GetReduction();
-    int child_count = int(reduction.handles->size());
+    int child_count = static_cast<int>(reduction.handles->size());
     TreeNodeNonTerminal* node = allocator.Create(reduction.production,
                                                  child_count);
     for (int i = 0; i < child_count; i++) {
@@ -196,7 +196,7 @@ void SimplifiedTreeBuilder::operator()(ParseResultType::T ret,
           int new_child_count = ln.node->child_count + ccs_len - 1;
           if (new_child_count > ln.max_childs) {
             ln.max_childs = std::max(new_child_count, ln.max_childs * 2);
-            ln.buf = reinterpret_cast<byte*>(realloc(ln.buf, 
+            ln.buf = reinterpret_cast<byte*>(realloc(ln.buf,
               TreeNodeNonTerminal::CalculateObjectSize(ln.max_childs)));
             ln_cn = ln.node = reinterpret_cast<TreeNodeNonTerminal*>(ln.buf);
           }
@@ -230,7 +230,7 @@ void SimplifiedTreeBuilder::operator()(ParseResultType::T ret,
       ln.max_childs = std::max(16, int(ccs.size()));
       ln.buf = (byte*)malloc(TreeNodeNonTerminal::CalculateObjectSize(ln.max_childs));
       ln.node = new (ln.buf) TreeNodeNonTerminal(r.production, int(ccs.size()));
-      for (int i=0; i < int(ccs.size()); i++)
+      for (int i = 0; i < int(ccs.size()); i++)
         ln.node->childs[i] = ccs[i].node;
       lns.push_back(ln);
       ln_cn = ln.node;
@@ -274,7 +274,7 @@ void SimplifiedTreeBuilder::operator()(ParseResultType::T ret,
       // create a non-terminal node
       TreeNodeNonTerminal* node = allocator.Create(r.production, ccs.size());
       for (size_t i = 0, i_end = ccs.size(); i < i_end; i++) {
-        node->childs[i] = (ccs[i].node == ln_cn) 
+        node->childs[i] = (ccs[i].node == ln_cn)
             ? PopListNodeAndMove()
             : ccs[i].node;
       }

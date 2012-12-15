@@ -1,4 +1,4 @@
-// Copyright [year] <Copyright Owner>
+// Copyright 2012 Esun Kim
 
 #include "strs.h"
 #include <stdio.h>

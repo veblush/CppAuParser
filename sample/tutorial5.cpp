@@ -1,8 +1,10 @@
+// Copyright 2012 Esun Kim
+
 #include <cppauparser/all.h>
 #include <stdio.h>
 
 // You can use resource system for windows platform or use adding
-// extra section for linux  to embed grammar .egt file. 
+// extra section for linux  to embed grammar .egt file.
 // But this time to deal with compatibility the simplest way is used.
 // Just convert .egt file to a c-style hexified buffer and include.
 // You can make your own string by following command:

@@ -1,4 +1,4 @@
-// Copyright [year] <Copyright Owner>
+// Copyright 2012 Esun Kim
 
 #include "parser.h"
 #include <vector>
@@ -295,7 +295,7 @@ std::pair<int, int> Parser::GetPosition() const {
   return lexer_.GetPosition();
 }
 
-ProductionHandler::ProductionHandler(const Grammar& grammar) 
+ProductionHandler::ProductionHandler(const Grammar& grammar)
   : grammar_(grammar),
     result_(nullptr) {
     handlers_.resize(grammar_.productions.size(), nullptr);

@@ -1,4 +1,4 @@
-// Copyright [year] <Copyright Owner>
+// Copyright 2012 Esun Kim
 
 #ifndef _CPPAUPARSER_BASE_H_
 #define _CPPAUPARSER_BASE_H_
@@ -15,9 +15,6 @@
 
 #ifdef _MSC_VER
 # pragma warning(disable: 4251)
-# ifndef _DEBUG
-#  define _SECURE_SCL 0
-# endif
 #endif
 
 #ifdef _WIN32

@@ -1,3 +1,5 @@
+// Copyright 2012 Esun Kim
+
 #include <cppauparser/all.h>
 #include <stdio.h>
 #include <list>

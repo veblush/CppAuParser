@@ -1,4 +1,4 @@
-// Copyright [year] <Copyright Owner>
+// Copyright 2012 Esun Kim
 
 #ifndef _CPPAUPARSER_ALL_H_
 #define _CPPAUPARSER_ALL_H_

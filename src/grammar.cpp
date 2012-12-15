@@ -1,4 +1,4 @@
-// Copyright [year] <Copyright Owner>
+// Copyright 2012 Esun Kim
 
 #include "grammar.h"
 #include <stdio.h>
@@ -387,9 +387,9 @@ void Grammar::SetSimplicationRule() {
     i->sr_forward_child = ((nts.size() == 1 && ts.size() == 0) ||
                            (nts.size() == 0 && its.size() == 1) ||
                            (nts.size() == 0 && ts.size() == 1));
-    
+
     i->sr_merge_child = false;
-    
+
     i->sr_listify_recursion = false;
     for (auto j = nts.begin(), j_end = nts.end(); j != j_end; ++j) {
       if (i->head == (*j)->index) {
@@ -397,7 +397,7 @@ void Grammar::SetSimplicationRule() {
         break;
       }
     }
-    
+
     i->sr_remove_single_lexeme = ((nts.size() > 0 || its.size() > 0) &&
                                   (ts.size() > its.size()));
   }

@@ -1,4 +1,4 @@
-// Copyright [year] <Copyright Owner>
+// Copyright 2012 Esun Kim
 
 #ifndef _CPPAUPARSER_STRS_H_
 #define _CPPAUPARSER_STRS_H_
@@ -25,7 +25,7 @@ CppAuParserDecl const uint16_t* convert_utf16_to_utf8_string(
 // utf8_substring
 class CppAuParserDecl utf8_substring {
  public:
-  inline utf8_substring() 
+  inline utf8_substring()
     : str_(nullptr), len_(0) {
   }
 

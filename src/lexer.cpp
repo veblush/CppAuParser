@@ -1,7 +1,8 @@
-// Copyright [year] <Copyright Owner>
+// Copyright 2012 Esun Kim
 
 #include "lexer.h"
 #include <utility>
+#include <algorithm>
 
 namespace cppauparser {
 
@@ -245,7 +246,7 @@ void Lexer::ReadToken(Token* token) {
     const SymbolGroup* symbol_group;
     if (symbol_type == SymbolType::kGroupStart) {
       for (auto i = grammar_.symbol_groups.begin(),
-                i_end = grammar_.symbol_groups.end(); 
+                i_end = grammar_.symbol_groups.end();
            i != i_end; ++i) {
         if (i->start == symbol->index) {
           symbol_group = &*i;

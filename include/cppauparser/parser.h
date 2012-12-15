@@ -1,4 +1,4 @@
-// Copyright [year] <Copyright Owner>
+// Copyright 2012 Esun Kim
 
 #ifndef _CPPAUPARSER_PARSER_H_
 #define _CPPAUPARSER_PARSER_H_
@@ -74,7 +74,7 @@ class CppAuParserDecl Parser {
   bool LoadString(const char* buf);
   bool LoadBuffer(const byte* buf, size_t size);
   void ResetCursor();
-  
+
   std::shared_ptr<LexerBuffer> ReleaseBuffer();
 
   ParseResultType::T ParseStep();
@@ -136,7 +136,7 @@ class CppAuParserDecl ProductionHandler {
 
   void* GetResult() const;
 
-private:
+ private:
   const Grammar& grammar_;
   std::vector<Handler> handlers_;
   void* result_;

@@ -1,4 +1,4 @@
-// Copyright [year] <Copyright Owner>
+// Copyright 2012 Esun Kim
 
 #ifndef _CPPAUPARSER_TREE_H_
 #define _CPPAUPARSER_TREE_H_
@@ -48,7 +48,7 @@ class CppAuParserDecl TreeNodeAllocator {
   TreeNode* Alloc(size_t size);
   TreeNodeTerminal* Create(const Token& token);
   TreeNodeNonTerminal* Create(const Production* production, int child_count);
-  
+
   void Clear();
   void Swap(TreeNodeAllocator& a);
 
@@ -89,7 +89,7 @@ class CppAuParserDecl SimplifiedTreeBuilder {
     TreeNode* node;
   };
   std::vector<ChildCandidate> ccs;
-  
+
   struct ListNode {
     TreeNodeNonTerminal* node;
     byte* buf;

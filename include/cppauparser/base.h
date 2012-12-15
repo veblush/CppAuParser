@@ -25,7 +25,7 @@
 #else
 # define PATHCHAR char
 # define PATHSTR
-# define PATHOPEN open
+# define PATHOPEN fopen
 #endif
 
 #define CPPAUPARSER_UNCOPYABLE(T) \

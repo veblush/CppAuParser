@@ -82,6 +82,18 @@ class CppAuParserDecl Parser {
   ParseResultType::T ParseAll();
 
   template<typename T>
+  ParseResultType::T ParseAll(const T& handler) {
+    while (true) {
+      ParseResultType::T ret = ParseStep();
+      handler(ret, *this);
+      if (ret == ParseResultType::kAccept ||
+          ret == ParseResultType::kError) {
+        return ret;
+      }
+    }
+  }
+
+  template<typename T>
   ParseResultType::T ParseAll(T& handler) {
     while (true) {
       ParseResultType::T ret = ParseStep();

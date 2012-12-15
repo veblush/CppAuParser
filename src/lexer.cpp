@@ -1,6 +1,7 @@
 // Copyright 2012 Esun Kim
 
 #include "lexer.h"
+#include <string.h>
 #include <utility>
 #include <algorithm>
 

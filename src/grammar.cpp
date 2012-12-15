@@ -2,6 +2,7 @@
 
 #include "grammar.h"
 #include <stdio.h>
+#include <string.h>
 #include <vector>
 #include <algorithm>
 
@@ -82,10 +83,10 @@ inline utf8_string read_string(const char** buf) {
 
 struct EntryValue {
   char type;
-  bool boolean;
-  byte byte;
-  int16_t integer;
-  utf8_string string;
+  bool v_bool;
+  byte v_byte;
+  int16_t v_int;
+  utf8_string v_str;
 };
 
 inline bool read_value(const char** buf, EntryValue* value) {
@@ -95,19 +96,19 @@ inline bool read_value(const char** buf, EntryValue* value) {
     break;
   case 'b':
     value->type = *((*buf)++);
-    value->byte = read_byte(buf);
+    value->v_byte = read_byte(buf);
     break;
   case 'B':
     value->type = *((*buf)++);
-    value->boolean = read_bool(buf);
+    value->v_bool = read_bool(buf);
     break;
   case 'I':
     value->type = *((*buf)++);
-    value->integer = read_integer(buf);
+    value->v_int = read_integer(buf);
     break;
   case 'S':
     value->type = *((*buf)++);
-    value->string = read_string(buf);
+    value->v_str = read_string(buf);
     break;
   default:
     value->type = 0;
@@ -139,90 +140,90 @@ bool Grammar::LoadBuffer(const char* buf, size_t len) {
     }
 
     // set by entries
-    switch (v[0].byte) {
+    switch (v[0].v_byte) {
     case 'p': {
         Property o;
-        o.index = v[1].integer;
-        o.name = v[2].string;
-        o.value = v[3].string;
+        o.index = v[1].v_int;
+        o.name = v[2].v_str;
+        o.value = v[3].v_str;
         properties.push_back(o);
       }
       break;
     case 't': {
-        symbols.resize(v[1].integer);
-        charsets.resize(v[2].integer);
-        productions.resize(v[3].integer);
-        dfa_states.resize(v[4].integer);
-        lalr_states.resize(v[5].integer);
-        symbol_groups.resize(v[6].integer);
+        symbols.resize(v[1].v_int);
+        charsets.resize(v[2].v_int);
+        productions.resize(v[3].v_int);
+        dfa_states.resize(v[4].v_int);
+        lalr_states.resize(v[5].v_int);
+        symbol_groups.resize(v[6].v_int);
       }
       break;
     case 'c': {
-        CharacterSet& o = charsets[v[1].integer];
-        o.index = v[1].integer;
-        o.uniplane = v[2].integer;
-        for (int16_t i = 0; i < v[3].integer; i++) {
+        CharacterSet& o = charsets[v[1].v_int];
+        o.index = v[1].v_int;
+        o.uniplane = v[2].v_int;
+        for (int16_t i = 0; i < v[3].v_int; i++) {
           o.ranges.push_back(std::make_pair(
-            (uint16_t)v[5+i*2].integer,
-            (uint16_t)v[6+i*2].integer));
+            (uint16_t)v[5+i*2].v_int,
+            (uint16_t)v[6+i*2].v_int));
         }
       }
       break;
     case 'S': {
-        Symbol& o = symbols[v[1].integer];
-        o.index = v[1].integer;
-        o.name = v[2].string;
-        o.type = (SymbolType::T)v[3].integer;
+        Symbol& o = symbols[v[1].v_int];
+        o.index = v[1].v_int;
+        o.name = v[2].v_str;
+        o.type = (SymbolType::T)v[3].v_int;
       }
       break;
     case 'g': {
-        SymbolGroup& o = symbol_groups[v[1].integer];
-        o.index = v[1].integer;
-        o.name = v[2].string;
-        o.container = v[3].integer;
-        o.start = v[4].integer;
-        o.end = v[5].integer;
-        o.advance_mode = (AdvanceModeType::T)v[6].integer;
-        o.ending_mode = (EndingModeType::T)v[7].integer;
-        for (int16_t i = 0; i < v[9].integer; i++) {
-          o.nesting_groups.push_back(v[10+i].integer);
+        SymbolGroup& o = symbol_groups[v[1].v_int];
+        o.index = v[1].v_int;
+        o.name = v[2].v_str;
+        o.container = v[3].v_int;
+        o.start = v[4].v_int;
+        o.end = v[5].v_int;
+        o.advance_mode = (AdvanceModeType::T)v[6].v_int;
+        o.ending_mode = (EndingModeType::T)v[7].v_int;
+        for (int16_t i = 0; i < v[9].v_int; i++) {
+          o.nesting_groups.push_back(v[10+i].v_int);
         }
       }
       break;
     case 'R': {
-        Production& o = productions[v[1].integer];
-        o.index = v[1].integer;
-        o.head = v[2].integer;
+        Production& o = productions[v[1].v_int];
+        o.index = v[1].v_int;
+        o.head = v[2].v_int;
         for (int16_t i = 4; i < value_count; i++) {
-          o.handles.push_back(v[i].integer);
+          o.handles.push_back(v[i].v_int);
         }
       }
       break;
     case 'I': {
-        dfa_init = v[1].integer;
-        lalr_init = v[2].integer;
+        dfa_init = v[1].v_int;
+        lalr_init = v[2].v_int;
       }
       break;
     case 'D': {
-        DFAState& o = dfa_states[v[1].integer];
-        o.index = v[1].integer;
-        o.accept_symbol = v[2].boolean ? v[3].integer : -1;
+        DFAState& o = dfa_states[v[1].v_int];
+        o.index = v[1].v_int;
+        o.accept_symbol = v[2].v_bool ? v[3].v_int : -1;
         for (int16_t i = 0; i < (value_count - 5) / 3; i++) {
           DFAEdge edge;
-          edge.charset = v[i*3+5].integer;
-          edge.target = v[i*3+6].integer;
+          edge.charset = v[i*3+5].v_int;
+          edge.target = v[i*3+6].v_int;
           o.edges.push_back(edge);
         }
       }
       break;
     case 'L': {
-        LALRState& o = lalr_states[v[1].integer];
-        o.index = v[1].integer;
+        LALRState& o = lalr_states[v[1].v_int];
+        o.index = v[1].v_int;
         for (int16_t i = 0; i < (value_count - 3) / 4; i++) {
-          LALRAction& action = o.actions[v[i*4+3].integer];
-          action.symbol = v[i*4+3].integer;
-          action.type = (LALRActionType::T)v[i*4+4].integer;
-          action.target = v[i*4+5].integer;
+          LALRAction& action = o.actions[v[i*4+3].v_int];
+          action.symbol = v[i*4+3].v_int;
+          action.type = (LALRActionType::T)v[i*4+4].v_int;
+          action.target = v[i*4+5].v_int;
         }
       }
       break;

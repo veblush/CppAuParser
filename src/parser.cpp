@@ -49,6 +49,9 @@ ParseErrorInfo::ParseErrorInfo(
 
 utf8_string ParseErrorInfo::GetString() const {
   switch (type) {
+  case ParseErrorType::kNone:
+    return utf8_format("None");
+
   case ParseErrorType::kLexicalError:
     return utf8_format("LexicalError(%d:%d) Token='%s'",
         token.position.first, token.position.second,

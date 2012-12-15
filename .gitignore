@@ -3,7 +3,7 @@
 *.sdf
 *.opensdf
 *.aps
-
+build/
 obj/
 msvc/bin/
 ipch/

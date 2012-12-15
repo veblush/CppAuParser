@@ -1,6 +1,7 @@
 // Copyright 2012 Esun Kim
 
 #include "tree.h"
+#include <string.h>
 #include <vector>
 #include <algorithm>
 

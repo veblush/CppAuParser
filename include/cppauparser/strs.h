@@ -26,7 +26,7 @@ CppAuParserDecl const uint16_t* convert_utf16_to_utf8_string(
 class CppAuParserDecl utf8_substring {
  public:
   inline utf8_substring()
-    : str_(nullptr), len_(0) {
+    : str_(NULL_PTR), len_(0) {
   }
 
   inline utf8_substring(const byte* str, size_t len)

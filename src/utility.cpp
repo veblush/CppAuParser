@@ -16,7 +16,7 @@ ParseToTreeResult DoParseToTree(const Grammar& grammar, Parser& parser) {
     ret.node_allocator = std::make_shared<TreeNodeAllocator>();
     ret.node_allocator->Swap(builder.allocator);
   } else {
-    ret.result = nullptr;
+    ret.result = NULL_PTR;
     ret.error_info = parser.GetErrorInfo();
   }
 

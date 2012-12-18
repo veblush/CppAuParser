@@ -12,11 +12,11 @@ TreeNode::TreeNode(const Production* production)
 }
 
 bool TreeNode::IsTerminal() const {
-  return production == nullptr;
+  return production == NULL_PTR;
 }
 
 bool TreeNode::IsNonTerminal() const {
-  return production != nullptr;
+  return production != NULL_PTR;
 }
 
 void TreeNode::Dump(int depth) const {
@@ -36,7 +36,7 @@ void TreeNode::Dump(int depth) const {
 }
 
 TreeNodeTerminal::TreeNodeTerminal(const Token& token)
-    : TreeNode(nullptr),
+    : TreeNode(NULL_PTR),
       token(token) {
 }
 
@@ -54,7 +54,7 @@ size_t TreeNodeNonTerminal::CalculateObjectSize(int child_count) {
 
 TreeNodeAllocator::TreeNodeAllocator()
     : block_size_(4096),
-      cur_(nullptr),
+      cur_(NULL_PTR),
       cur_left_(0) {
 }
 
@@ -94,7 +94,7 @@ TreeNodeNonTerminal* TreeNodeAllocator::Create(const Production* production,
 void TreeNodeAllocator::Clear() {
   for (auto i = blocks_.begin(), i_end = blocks_.end(); i != i_end; ++i)
     free(*i);
-  cur_ = nullptr;
+  cur_ = NULL_PTR;
   cur_left_ = 0;
 }
 
@@ -106,7 +106,7 @@ void TreeNodeAllocator::Swap(TreeNodeAllocator& a) {
 }
 
 TreeBuilder::TreeBuilder()
-    : result(nullptr) {
+    : result(NULL_PTR) {
 }
 
 void TreeBuilder::operator()(ParseResultType::T ret,
@@ -129,8 +129,8 @@ void TreeBuilder::operator()(ParseResultType::T ret,
 }
 
 SimplifiedTreeBuilder::SimplifiedTreeBuilder()
-    : result(nullptr),
-      ln_cn(nullptr) {
+    : result(NULL_PTR),
+      ln_cn(NULL_PTR) {
 }
 
 void SimplifiedTreeBuilder::operator()(ParseResultType::T ret,
@@ -296,7 +296,7 @@ void SimplifiedTreeBuilder::operator()(ParseResultType::T ret,
 void SimplifiedTreeBuilder::PopListNode() {
   free(lns.back().buf);
   lns.pop_back();
-  ln_cn = lns.empty() ? nullptr : lns.back().node;
+  ln_cn = lns.empty() ? NULL_PTR : lns.back().node;
 }
 
 TreeNodeNonTerminal* SimplifiedTreeBuilder::PopListNodeAndMove() {

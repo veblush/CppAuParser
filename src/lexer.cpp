@@ -8,7 +8,7 @@
 namespace cppauparser {
 
 Token::Token()
-    : symbol(nullptr)
+    : symbol(NULL_PTR)
     , position(std::make_pair(0, 0)) {
 }
 
@@ -26,7 +26,7 @@ utf8_string Token::GetString() const {
 }
 
 LexerBuffer::LexerBuffer()
-    : buf_(nullptr),
+    : buf_(NULL_PTR),
       buf_size_(0),
       buf_sharable_(false) {
 }
@@ -55,7 +55,7 @@ void LexerBuffer::Clear() {
     if (buf_sharable_ == false) {
       free(buf_);
     }
-    buf_ = nullptr;
+    buf_ = NULL_PTR;
   }
   buf_size_ = 0;
   buf_sharable_ = false;
@@ -69,10 +69,10 @@ void LexerBuffer::Swap(LexerBuffer& b) {
 
 Lexer::Lexer(const Grammar& grammar)
     : grammar_(grammar)
-    , buf_(nullptr)
-    , buf_cur_(nullptr)
-    , buf_end_(nullptr)
-    , buf_peek_(nullptr)
+    , buf_(NULL_PTR)
+    , buf_cur_(NULL_PTR)
+    , buf_end_(NULL_PTR)
+    , buf_peek_(NULL_PTR)
     , line_(0)
     , column_(0) {
 }
@@ -120,9 +120,9 @@ bool Lexer::LoadBuffer(const byte* buf, size_t size) {
 void Lexer::Unload() {
   if (buf_) {
     allocator_.Clear();
-    buf_ = nullptr;
-    buf_cur_ = nullptr;
-    buf_end_ = nullptr;
+    buf_ = NULL_PTR;
+    buf_cur_ = NULL_PTR;
+    buf_end_ = NULL_PTR;
   }
 }
 
@@ -142,7 +142,7 @@ void Lexer::PeekToken(Token* token) {
   const DFAState* state = &grammar_.dfa_states[grammar_.dfa_init];
   byte* cur = buf_cur_;
   int hit_symbol = -1;
-  byte* hit_cur = nullptr;
+  byte* hit_cur = NULL_PTR;
   while (cur < buf_end_) {
     int32_t c = *cur;
     if (c < 0x80) {

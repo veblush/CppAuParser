@@ -12,7 +12,7 @@ utf8_string ParseItem::GetString() const {
                                      production->GetID().c_str());
   } else if (token.symbol) {
     return utf8_format("S=%d, T=%s", state->index,
-                                     token.symbol->GetID().c_str());
+                                     token.GetString().c_str());
   } else {
     return utf8_format("S=%d", state->index);
   }
@@ -22,9 +22,9 @@ utf8_string ParseReduction::GetString() const {
   utf8_string handles_str;
   for (auto i = handles->begin(), i_end = handles->end(); i != i_end; ++i) {
     if (i == handles->begin()) {
-      handles_str += i->GetString();
+      handles_str += utf8_format("(%s)", i->GetString().c_str());
     } else {
-      handles_str += (byte*)", " + i->GetString();
+      handles_str += utf8_format(", (%s)", i->GetString().c_str());
     }
   }
   return utf8_format("P=%d, H=(%s), Hs=[%s]", production->index,
@@ -35,7 +35,7 @@ utf8_string ParseReduction::GetString() const {
 ParseErrorInfo::ParseErrorInfo()
     : type(ParseErrorType::kNone),
       position(std::make_pair(0, 0)),
-      state(nullptr) {
+      state(NULL_PTR) {
 }
 
 ParseErrorInfo::ParseErrorInfo(
@@ -140,7 +140,7 @@ ParseResultType::T Parser::ParseStep() {
   }
 
   const LALRAction* fa = state_->jmp_table[token_.symbol->index];
-  if (fa == nullptr) {
+  if (fa == NULL_PTR) {
     error_info_ = ParseErrorInfo(ParseErrorType::kSyntaxError,
                                  GetPosition(), state_, token_);
     for (auto i = state_->actions.begin(),
@@ -161,7 +161,7 @@ ParseResultType::T Parser::ParseStep() {
   if (action.type == LALRActionType::kShift) {
     // Shift
     state_ = &grammar_.lalr_states[action.target];
-    ParseItem item = { state_, nullptr, token_, nullptr };
+    ParseItem item = { state_, NULL_PTR, token_, NULL_PTR };
     stack_.push_back(item);
     token_used_ = true;
     return ParseResultType::kShift;
@@ -186,7 +186,7 @@ ParseResultType::T Parser::ParseStep() {
     }
     // Reduce/Goto
     const LALRAction* ga = top_state->jmp_table[production.head];
-    if (ga == nullptr) {
+    if (ga == NULL_PTR) {
       error_info_ = ParseErrorInfo(ParseErrorType::kInternalError,
                                    GetPosition(), state_, token_);
       return ParseResultType::kError;
@@ -202,7 +202,7 @@ ParseResultType::T Parser::ParseStep() {
       stack_.back().state = state_;
       return ParseResultType::kReduceEliminated;
     } else {
-      ParseItem item = { state_, &production, Token(), nullptr };
+      ParseItem item = { state_, &production, Token(), NULL_PTR };
       stack_.push_back(item);
       reduction_.head = &stack_.back();
       return ParseResultType::kReduce;
@@ -248,7 +248,7 @@ void Parser::ResetState() {
   state_ = &grammar_.lalr_states[grammar_.lalr_init];
   token_ = Token();
   token_used_ = true;
-  ParseItem item = { state_, nullptr, token_, nullptr };
+  ParseItem item = { state_, NULL_PTR, token_, NULL_PTR };
   stack_.clear();
   stack_.push_back(item);
 }
@@ -300,14 +300,14 @@ std::pair<int, int> Parser::GetPosition() const {
 
 ProductionHandler::ProductionHandler(const Grammar& grammar)
   : grammar_(grammar),
-    result_(nullptr) {
-    handlers_.resize(grammar_.productions.size(), nullptr);
+    result_(NULL_PTR) {
+    handlers_.resize(grammar_.productions.size(), NULL_PTR);
 }
 
 ProductionHandler::Handler ProductionHandler::GetHandler(
     const char* production_id) {
   const Production* p = grammar_.GetProduction((const byte*)production_id);
-  return (p) ? handlers_[p->index] : nullptr;
+  return (p) ? handlers_[p->index] : NULL_PTR;
 }
 
 bool ProductionHandler::SetHandler(const char* production_id,

@@ -306,17 +306,21 @@ void Grammar::BuildDFALookup() {
         }
       }
     }
-    std::sort(s.jmp_ranges.begin(), s.jmp_ranges.end(),
-      [](const DFAState::JmpRange& a, const DFAState::JmpRange& b) {
+
+    struct JmpRangeLess {
+      bool operator()(const DFAState::JmpRange& a,
+                      const DFAState::JmpRange& b) {
         return a.range_from < b.range_from;
-    });
+      }
+    };
+    std::sort(s.jmp_ranges.begin(), s.jmp_ranges.end(), JmpRangeLess());
   }
 }
 
 void Grammar::BuildLALRLookup() {
   for (auto i = lalr_states.begin(), i_end = lalr_states.end(); i != i_end; ++i) {
     LALRState& s = *i;
-    s.jmp_table.resize(symbols.size(), nullptr);
+    s.jmp_table.resize(symbols.size(), NULL_PTR);
     for (auto j = s.actions.begin(), j_end = s.actions.end(); j != j_end; ++j) {
       s.jmp_table[j->first] = &j->second;
     }
@@ -408,7 +412,7 @@ Symbol* Grammar::GetSymbol(const utf8_string& pname) const {
   auto i = symbol_pname_lookup_.find(pname);
   return i != symbol_pname_lookup_.end()
       ? const_cast<Symbol*>(i->second)
-      : nullptr;
+      : NULL_PTR;
 }
 
 Symbol* Grammar::GetSymbol(const char* id) const {
@@ -419,7 +423,7 @@ Production* Grammar::GetProduction(const utf8_string& pname) const {
   auto i = production_pname_lookup_.find(pname);
   return i != production_pname_lookup_.end()
       ? const_cast<Production*>(i->second)
-      : nullptr;
+      : NULL_PTR;
 }
 
 Production* Grammar::GetProduction(const char* id) const {

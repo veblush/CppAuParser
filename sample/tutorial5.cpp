@@ -26,15 +26,11 @@ int main(int argc, char* argv[]) {
 
   // parse folling string with a loaded grammar
 
-  cppauparser::Parser parser(grammar);
-  parser.LoadString("-2*(3+4)-5");
-
-  cppauparser::TreeBuilder builder;
-  parser.LoadString("-2*(3+4)-5");
-  if (parser.ParseAll(builder) == cppauparser::ParseResultType::kAccept) {
-    builder.result->Dump();
+  auto ret = cppauparser::ParseStringToTree(grammar, "-2*(3+4)-5");
+  if (ret.result) {
+    ret.result->Dump();
   } else {
-    printf("Error\t%s\n", parser.GetErrorInfo().GetString().c_str());
+    printf("Error\t%s\n", ret.error_info.GetString().c_str());
   }
 
   return 0;

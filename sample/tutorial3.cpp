@@ -14,15 +14,12 @@ int main(int argc, char* argv[]) {
 
   // parse with building a parse-tree
 
-  cppauparser::Parser parser(grammar);
-  parser.LoadString("-2*(3+4)-5");
-
-  cppauparser::TreeBuilder builder;
-  if (parser.ParseAll(builder) == cppauparser::ParseResultType::kAccept) {
-    builder.result->Dump();
+  auto ret = cppauparser::ParseStringToTree(grammar, "-2*(3+4)-5");
+  if (ret.result) {
+    ret.result->Dump();
     printf("\n");
   } else {
-    printf("Error\t%s\n", parser.GetErrorInfo().GetString().c_str());
+    printf("Error\t%s\n", ret.error_info.GetString().c_str());
     return 1;
   }
 
@@ -60,7 +57,7 @@ int main(int argc, char* argv[]) {
     }
   };
 
-  int result = Evaluator::eval(builder.result);
+  int result = Evaluator::eval(ret.result);
   printf("Result = %d\n", result);
   
   return 0;

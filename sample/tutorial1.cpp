@@ -14,6 +14,34 @@ int main(int argc, char* argv[]) {
 
   // parse with printing events
 
+  struct ParserEvent {
+    void operator()(cppauparser::ParseResultType::T ret,
+                    cppauparser::Parser& parser) const {
+      switch (ret) {
+      case cppauparser::ParseResultType::kAccept:
+        printf("Accept\t\n");
+        break;
+      case cppauparser::ParseResultType::kShift:
+        printf("Shift\t%s\n", parser.GetTop().GetString().c_str());
+        break;
+      case cppauparser::ParseResultType::kReduce:
+        printf("Reduce\t%s\n", parser.GetReduction().GetString().c_str());
+        break;
+      case cppauparser::ParseResultType::kReduceEliminated:
+        printf("ReduceEliminated\t\n");
+        break;
+      case cppauparser::ParseResultType::kError:
+        printf("Error\t%s\n", parser.GetErrorInfo().GetString().c_str());
+        break;
+      }
+    }
+  };
+  cppauparser::Parser parser(grammar);
+  parser.LoadString("-2*(3+4)-5");
+  parser.ParseAll(ParserEvent());
+
+  // following is lambda expression version
+  /*
   cppauparser::Parser parser(grammar);
   parser.LoadString("-2*(3+4)-5");
   parser.ParseAll([&](cppauparser::ParseResultType::T ret,
@@ -36,15 +64,15 @@ int main(int argc, char* argv[]) {
       break;
     }
   });
+  */
 
   // parse with building a parse-tree
 
-  cppauparser::TreeBuilder builder;
-  parser.LoadString("-2*(3+4)-5");
-  if (parser.ParseAll(builder) == cppauparser::ParseResultType::kAccept) {
-    builder.result->Dump();
+  auto ret = cppauparser::ParseStringToTree(grammar, "-2*(3+4)-5");
+  if (ret.result) {
+    ret.result->Dump();
   } else {
-    printf("Error\t%s\n", parser.GetErrorInfo().GetString().c_str());
+    printf("Error\t%s\n", ret.error_info.GetString().c_str());
   }
 
   return 0;

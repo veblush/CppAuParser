@@ -19,8 +19,11 @@ Overview
 
 New C++ engine for GOLD Parser. It supports unicode and new .egt file format.
 
+Make
+=====
+
 Building
-========
+--------
 
 You can build cppauparser from cmake::
 
@@ -32,7 +35,7 @@ You can build cppauparser from cmake::
 Alternatively you can use Visual C++ 2010 or newer to build cppauparser using msvc/all.sln.
 
 Compatibility
-=============
+-------------
 
 You can use following compilers to build cppauparser.
 
@@ -40,7 +43,7 @@ You can use following compilers to build cppauparser.
  * GCC 4.4 or newer
  * Clang 2.9 or newer
 
-Because I want to use full c++11 features like scoped enum, lambda expression, ranged-for, etc.
+I want to use full c++11 features like scoped enum, lambda expression, ranged-for, etc.
 But to support old compilers which support c++11 partially, only limited c++11 features is used as following:
 
  * auto keyword
@@ -184,26 +187,93 @@ Link: https://github.com/veblush/CppAuParser/blob/master/sample/tutorial1.cpp
 Evaluate with parsing events
 ----------------------------
 
-TODO
+Because LALR is a bottom-up parser, every parsing event occurs in a bottom up way.
+And if there is a way to evaluate a parsed string from bottom-up, we can use an event-driven
+eveluation process as following::
+
+	cppauparser::ProductionHandler ph(grammar);
+	PH_ON(ph, "<E> ::= <E> + <M>", return (void*)((int)c[0].data + (int)c[2].data););
+	PH_ON(ph, "<E> ::= <E> - <M>", return (void*)((int)c[0].data - (int)c[2].data););
+	PH_ON(ph, "<E> ::= <M>",       return c[0].data;);
+	PH_ON(ph, "<M> ::= <M> * <N>", return (void*)((int)c[0].data * (int)c[2].data););
+	PH_ON(ph, "<M> ::= <M> / <N>", return (void*)((int)c[0].data / (int)c[2].data););
+	PH_ON(ph, "<M> ::= <N>",       return c[0].data;);
+	PH_ON(ph, "<N> ::= - <V>",     return (void*)-(int)c[1].data; );
+	PH_ON(ph, "<N> ::= <V>",       return c[0].data;);
+	PH_ON(ph, "<V> ::= Num",       return (void*)atoi((char*)c[0].token.lexeme.c_str()););
+	PH_ON(ph, "<V> ::= ( <E> )",   return c[1].data;);
+
+	cppauparser::Parser parser(grammar);
+	parser.LoadString("-2*(3+4)-5");
+	parser.ParseAll(ph);
+	printf("result=%d\n", (int)ph.GetResult());
+
+Result is following::
+
+	Result = -19
+
+<TODO>
 
 Link: https://github.com/veblush/CppAuParser/blob/master/sample/tutorial2.cpp
 
 Evaluate with a syntax tree
 ---------------------------
-TODO
+
+Sometimes we need a whole parse tree. Because it is easy to traverse and manipulate.
+If you need a value of sibling nodes or parents while evaluating a tree, this is what you're finding::
+
+	struct Evaluator {
+	  static int eval(const cppauparser::TreeNode* node) {
+	    const cppauparser::TreeNodeNonTerminal* nt = static_cast<const cppauparser::TreeNodeNonTerminal*>(node);
+	    const cppauparser::TreeNode* const * c = &nt->childs[0];
+	    switch (node->production->index) {
+	    case 0: // <E> ::= <E> + <M>
+	      return eval(c[0]) + eval(c[2]);
+	    case 1: // <E> ::= <E> - <M>
+	      return eval(c[0]) - eval(c[2]);
+	    case 2: // <E> ::= <M>
+	      return eval(c[0]);
+	    case 3: // <M> ::= <M> * <N>
+	      return eval(c[0]) * eval(c[2]);
+	    case 4: // <M> ::= <M> / <N>
+	      return eval(c[0]) / eval(c[2]);
+	    case 5: // <M> ::= <N>
+	      return eval(c[0]);
+	    case 6: // <N> ::= - <V>
+	      return -eval(c[1]);
+	    case 7: // <N> ::= <V>
+	      return eval(c[0]);
+	    case 8: // <V> ::= Num
+	      return atoi((const char*)static_cast<const cppauparser::TreeNodeTerminal*>(c[0])->token.lexeme.c_str());
+	    case 9: // <V> ::= ( <E> )
+	      return eval(c[1]);
+	      break;
+	    default:
+	      return 0;
+	    }
+	  }
+	};
+
+	int result = Evaluator::eval(ret.result);
+	printf("Result = %d\n", result);
+
+Result is following::
+
+	Result = -19
 
 Link: https://github.com/veblush/CppAuParser/blob/master/sample/tutorial3.cpp
 
 Simplified Tree
 ---------------
 
-TODO
+<TODO>
 
 Link: https://github.com/veblush/CppAuParser/blob/master/sample/tutorial4.cpp
 
 Embedding a Grammar
 -------------------
-TODO
+
+<TODO>
 
 Link: https://github.com/veblush/CppAuParser/blob/master/sample/tutorial5.cpp
 

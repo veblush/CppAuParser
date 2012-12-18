@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
   cppauparser::Parser parser(grammar);
   parser.LoadString("-2*(3+4)-5");
   parser.ParseAll(ph);
-  printf("result=%d\n", (int)ph.GetResult());
+  printf("Result = %d\n", (int)ph.GetResult());
 
   return 0;
 }

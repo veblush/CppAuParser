@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  // parse a string with a ProductionHandler
+  // evaluate a parse tree by traversing nodes
 
   struct Evaluator {
     static int eval(const cppauparser::TreeNode* node) {

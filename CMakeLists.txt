@@ -11,3 +11,4 @@ endif ()
 
 add_subdirectory(src/ lib/)
 add_subdirectory(sample/)
+add_subdirectory(tool/)

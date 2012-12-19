@@ -29,5 +29,48 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
+  // evaluate a simplfiied parse tree by traversing nodes
+
+  struct Evaluator {
+    static int eval(const cppauparser::TreeNode* node) {
+      if (node->IsNonTerminal()) {
+        const cppauparser::TreeNodeNonTerminal* nt = static_cast<const cppauparser::TreeNodeNonTerminal*>(node);
+        const cppauparser::TreeNode* const * c = &nt->childs[0];
+        int ret = eval(c[0]);
+        switch (node->production->index) {
+        case 0: // <E> ::= <E> + <M>
+          for (int i = 1; i < nt->child_count; i++) {
+            ret += eval(c[i]);
+          }
+          break;
+        case 1: // <E> ::= <E> - <M>
+          for (int i = 1; i < nt->child_count; i++) {
+            ret -= eval(c[i]);
+          }
+          break;
+        case 3: // <M> ::= <M> * <N>
+          for (int i = 1; i < nt->child_count; i++) {
+            ret *= eval(c[i]);
+          }
+          break;
+        case 4: // <M> ::= <M> / <N>
+          for (int i = 1; i < nt->child_count; i++) {
+            ret /= eval(c[i]);
+          }
+          break;
+        case 6: // <N> ::= - <V>
+          ret = -ret;
+          break;
+        }
+        return ret;
+      } else {
+        const cppauparser::TreeNodeTerminal* t = static_cast<const cppauparser::TreeNodeTerminal*>(node);
+        return atoi((const char*)t->token.lexeme.c_str());
+      }
+    }
+  };
+
+  int result = Evaluator::eval(ret.result);
+  printf("Result = %d\n", result);
   return 0;
 }

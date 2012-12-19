@@ -8,7 +8,7 @@
 // But this time to deal with compatibility the simplest way is used.
 // Just convert .egt file to a c-style hexified buffer and include.
 // You can make your own string by following command:
-//   hexify.py -w 79 data/operator.egt > tutorial5_grammar.str
+//   auparser-tool e -w 79 data/operator.egt > tutorial5_grammar.str
 
 const char operator_grammar_buf[] =
   #include "tutorial5_grammar.str"

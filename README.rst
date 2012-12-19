@@ -212,7 +212,23 @@ Result is following::
 
 	Result = -19
 
-<TODO>
+As you see, a lookup-table is required to evaluate a value with parsing events.
+Items in the table can be constructed by auparser with a grammar file as following::
+
+	auparser-tool show -P data/operator.egt
+
+And you can get a following template table and modify it as you need::
+
+	PH_ON(ph, "<E> ::= <E> + <M>", return 0;);
+	PH_ON(ph, "<E> ::= <E> - <M>", return 0;);
+	PH_ON(ph, "<E> ::= <M>", return 0;);
+	PH_ON(ph, "<M> ::= <M> * <N>", return 0;);
+	PH_ON(ph, "<M> ::= <M> / <N>", return 0;);
+	PH_ON(ph, "<M> ::= <N>", return 0;);
+	PH_ON(ph, "<N> ::= - <V>", return 0;);
+	PH_ON(ph, "<N> ::= <V>", return 0;);
+	PH_ON(ph, "<V> ::= Num", return 0;);
+	PH_ON(ph, "<V> ::= ( <E> )", return 0;);
 
 Link: https://github.com/veblush/CppAuParser/blob/master/sample/tutorial2.cpp
 
@@ -266,14 +282,95 @@ Link: https://github.com/veblush/CppAuParser/blob/master/sample/tutorial3.cpp
 Simplified Tree
 ---------------
 
-<TODO>
+A parse tree is quite verbose to capture structure correctly. Therefore it's necessary to abstract a tree.
+Usually there is an additional process to transform a parse tree to an abstract syntax tree. It's however bothersome.
+To handle this problem, a feature building a simplified tree is provided. Simply call the following function::
+
+	grammar.GetProduction("<V> ::= ( <E> )")->sr_forward_child = true;
+	auto ret = cppauparser::ParseStringToSTree(grammar, "-2*(1+2+4)-2-2-1");
+	ret.result->Dump();
+
+Result is following::
+
+	<E> ::= <E> - <M>
+	  <M> ::= <M> * <N>
+	    <N> ::= - <V>
+	      Num '2'
+	    <E> ::= <E> + <M>
+	      Num '1'
+	      Num '2'
+	      Num '4'
+	  Num '2'
+	  Num '2'
+	  Num '1'
+
+You can see that a result tree is very essential. The way evaluates a tree is following::
+
+	struct Evaluator {
+	  static int eval(const cppauparser::TreeNode* node) {
+	    if (node->IsNonTerminal()) {
+	      const cppauparser::TreeNodeNonTerminal* nt = static_cast<const cppauparser::TreeNodeNonTerminal*>(node);
+	      const cppauparser::TreeNode* const * c = &nt->childs[0];
+	      int ret = eval(c[0]);
+	      switch (node->production->index) {
+	      case 0: // <E> ::= <E> + <M>
+	        for (int i = 1; i < nt->child_count; i++) {
+	          ret += eval(c[i]);
+	        }
+	        break;
+	      case 1: // <E> ::= <E> - <M>
+	        for (int i = 1; i < nt->child_count; i++) {
+	          ret -= eval(c[i]);
+	        }
+	        break;
+	      case 3: // <M> ::= <M> * <N>
+	        for (int i = 1; i < nt->child_count; i++) {
+	          ret *= eval(c[i]);
+	        }
+	        break;
+	      case 4: // <M> ::= <M> / <N>
+	        for (int i = 1; i < nt->child_count; i++) {
+	          ret /= eval(c[i]);
+	        }
+	        break;
+	      case 6: // <N> ::= - <V>
+	        ret = -ret;
+	        break;
+	      }
+	      return ret;
+	    } else {
+	      const cppauparser::TreeNodeTerminal* t = static_cast<const cppauparser::TreeNodeTerminal*>(node);
+	      return atoi((const char*)t->token.lexeme.c_str());
+	    }
+	  }
+	};
+
+	int result = Evaluator::eval(ret.result);
+	printf("Result = %d\n", result);
+
+Result is following::
+
+	Result = -19
 
 Link: https://github.com/veblush/CppAuParser/blob/master/sample/tutorial4.cpp
 
 Embedding a Grammar
 -------------------
 
-<TODO>
+Basically we use a .egt grammar file exported from GOLD parser. Because of that
+we can dynamically use any grammar file on running but sometimes embedding grammar files is
+cumbersome or impossible. To handle this problem we make a c-string capturing .egt grammar file
+by hexifying binary data as following::
+
+	auparser-tool e -w 79 data/operator.egt > grammar.str
+
+It generates one big string, which can be used by #include::
+
+	const char operator_grammar_buf[] =
+	  #include "grammar.str"
+	  ;
+	cppauparser::Grammar grammar;
+	grammar.LoadBuffer(operator_grammar_buf);
 
 Link: https://github.com/veblush/CppAuParser/blob/master/sample/tutorial5.cpp
 

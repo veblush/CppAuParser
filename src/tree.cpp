@@ -169,7 +169,7 @@ void SimplifiedTreeBuilder::operator()(ParseResultType::T ret,
     }
 
     // forward a child node and drop me
-    if (p->sr_forward_child && hs.size() == 1) {
+    if (p->sr_forward_child && ccs.size() == 1) {
       if (ccs[0].node == ln_cn) {
         r.head->data = PopListNodeAndMove();
       } else {
